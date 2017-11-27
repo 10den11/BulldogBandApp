@@ -1,7 +1,7 @@
 package com.example.dominicg.cloudapp;
 
 /**
- * Created by Vhl2 on 11/18/2017.
+ * Created by Vhl2 on 11/22/2017.
  */
 
 public class BandMember {
@@ -33,6 +33,27 @@ public class BandMember {
         this.points = points;
         this.instrument = instrument;
     }
+
+    /**
+     * constructor with default points
+     * @param name
+     * @param password
+     * @param admin
+     * @param year
+     * @param userName
+     * @param instrument
+     */
+    public BandMember(String name, String password, Boolean admin, String year, String userName, String instrument) {
+        Name = name;
+        Password = password;
+        Admin = admin;
+        Year = year;
+        UserName = userName;
+        this.points = 0;
+        this.instrument = instrument;
+    }
+
+
 
     public String getName() {
         return Name;
@@ -92,9 +113,6 @@ public class BandMember {
 
     @Override
     public String toString() {
-        return "BandMember{" +
-                "UserName='" + UserName + '\'' +
-                ", points=" + points +
-                '}';
+        return  UserName + " Total Points: " + points;
     }
 }
