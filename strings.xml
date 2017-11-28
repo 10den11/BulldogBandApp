@@ -1,0 +1,30 @@
+<resources>
+    <string name="app_name">BandApp3</string>
+    <string name="add_name">add</string>
+    <string name="clear_name">clear</string>
+    <string name="delete_name">delete</string>
+    <string name="yes_button">yes</string>
+    <string name="no_button">no</string>
+    <string name="alert_title">alert</string>
+    <string name="clear_warning">Do you really want to clear the database?</string>
+    <string name="name">name</string>
+    <string name="username">username</string>
+    <string name="password">password</string>
+    <string-array name="sections">
+        <item>saxophone</item>
+        <item>trumpet</item>
+        <item>percussion</item>
+        <item>flute</item>
+        <item>clarinet</item>
+        <item>trombone</item>
+        <item>bass</item>
+        <item>sousaphone</item>
+    </string-array>
+    <string-array name="classes">
+        <item>freshman</item>
+        <item>sophomore</item>
+        <item>junior</item>
+        <item>senior</item>
+        <item>director</item>
+    </string-array>
+</resources>
