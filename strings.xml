@@ -10,6 +10,8 @@
     <string name="name">name</string>
     <string name="username">username</string>
     <string name="password">password</string>
+    <string name="password_check">confirm password</string>
+    <string name="finish_button">finish</string>
     <string-array name="sections">
         <item>saxophone</item>
         <item>trumpet</item>
@@ -27,4 +29,12 @@
         <item>senior</item>
         <item>director</item>
     </string-array>
+    <string name="saxophone_name">saxophone</string>
+    <string name="trumpet_name">trumpet</string>
+    <string name="percussion_name">percussion</string>
+    <string name="flute_name">flute</string>
+    <string name="clarinet_name">clarinet</string>
+    <string name="trombone">trombone</string>
+    <string name="bass_name">bass</string>
+    <string name="sousaphone_name">sousaphone</string>
 </resources>

@@ -1,7 +1,9 @@
 package com.example.vhl2.bandapp3;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
@@ -26,13 +28,18 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Collection;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity {
 
     final String TAG = "MainActivity";
     private DatabaseReference myRoster;
+    final int ADD_MEMBER_CODE = 1;
 
     GridLayout gridLayout;
     List<BandMember> roster;
@@ -48,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         gridLayout.setColumnCount(1);
         gridLayout.setBackgroundColor(Color.WHITE);
 
-        roster = new ArrayList<>();
+        roster = new ArrayList<BandMember>();
         listView = new ListView(this);
         GridLayout.Spec listViewRowSpec = GridLayout.spec(0);
         GridLayout.Spec listViewColSpec = GridLayout.spec(0, GridLayout.FILL);
@@ -57,15 +64,15 @@ public class MainActivity extends AppCompatActivity {
 
         // In the Database all band members are children of Users
         myRoster = FirebaseDatabase.getInstance().getReference("Users");
-        BandMember Vince = new BandMember("Vinent Lombardi","1234", true, "sophmore",
+        BandMember Vince = new BandMember("Vinent Lombardi","1234", true, "sophomore",
                 "vlombardi", 25, "saxophone");
-        BandMember Max = new BandMember("Maxwell Sherman","1234", false, "sophmore",
+        BandMember Max = new BandMember("Maxwell Sherman","1234", false, "sophomore",
                 "mSherman", 7, "percussion");
-        BandMember Brian = new BandMember("Brian", "1234", false, "Junior", "BrianRocks", 35,  "base");
+        BandMember Brian = new BandMember("Brian", "1234", false, "Junior", "BrianRocks", 35,  "bass");
 
-        addMember(Vince);
-        addMember(Max);
-        addMember(Brian);
+//          addMember(Vince);
+//          addMember(Max);
+//          addMember(Brian);
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -73,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode actionMode, int i, long l, boolean b) {
                 int numSelected = listView.getCheckedItemCount();
                 actionMode.setTitle(numSelected + " selected");
+
             }
 
             @Override
@@ -93,16 +101,18 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (menuId) {
                     case R.id.deleteMenuAction:
-                    for(int x = roster.size()-1; x >= 0; x--){
+                    for(int x = roster.size() - 1; x >= 0; x--){
                         if(listView.isItemChecked(x)){
+                            String instrument = roster.get(x).getInstrument();
                             String name = roster.get(x).getUserName();
-                            myRoster.child(name).removeValue();
+                            myRoster.child(instrument).child(name).removeValue();
                             roster.remove(x);
-
                         }
 
-                        arrayAdapter.notifyDataSetChanged();
+
                     }
+                    Collections.sort(roster);
+                    arrayAdapter.notifyDataSetChanged();
                 }
                 actionMode.finish();
                 return true;
@@ -124,23 +134,70 @@ public class MainActivity extends AppCompatActivity {
              */
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                //Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
-                //myRoster.orderByChild(s);
-                BandMember member = dataSnapshot.getValue(BandMember.class);
-                roster.add(member);
+
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    BandMember member = child.getValue(BandMember.class);
+                    roster.add(member);
+
+                    arrayAdapter.notifyDataSetChanged();
+                }
+                //Log.d(TAG, "onChildAdded: " + dataSnapshot.getChildrenCount());
+
+            }
+
+
+//            @Override
+//            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+//                Log.d(TAG, "onChildChanged: changed!");
+//                boolean exists;
+//
+//
+//
+//                for(DataSnapshot child : dataSnapshot.getChildren()){
+//                    BandMember member = child.getValue(BandMember.class);
+//                    exists = false;
+//                    for(int i = 0; i < roster.size(); i++){
+//                        if(roster.get(i).getUserName().equals(member.getUserName())){
+//                            exists = true;
+//                        }
+//                    }
+//                    if(!exists){
+//                        roster.add(member);
+//                    }
+//                    arrayAdapter.notifyDataSetChanged();
+//                }
+//            }
+
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.d(TAG, "onChildChanged: changed!");
+                boolean exists = true;
+
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    BandMember member = child.getValue(BandMember.class);
+
+                    if (exists){
+                        exists = false;
+                        String instrument = member.getInstrument();
+                        for(int i = roster.size() - 1; i >= 0; i--){
+                            if(roster.get(i).getInstrument().equals(instrument)){
+                                roster.remove(i);
+                                arrayAdapter.notifyDataSetChanged();
+                            }
+                        }
+                    }
+
+                    roster.add(member);
+
+                }
+                Collections.sort(roster);
                 arrayAdapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //Log.d(TAG, "onChildRemoved: ");
-
-
+                Log.d(TAG, "onChildRemoved: ");
 
             }
 
@@ -164,13 +221,42 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Push gives each value a key and setValue stores the objects in a database
-     * @param member
+     * @param member incoming band member
      */
     public void addMember(BandMember member){
-        String UserId = member.getUserName();
-        myRoster.child(UserId).setValue(member);
-
+        String userId = member.getUserName();
+        String userSection = member.getInstrument();
+        switch(userSection){
+            case "saxophone" :
+                myRoster.child("saxophone").child(userId).setValue(member);
+                break;
+            case "percussion" :
+                myRoster.child("percussion").child(userId).setValue(member);
+                break;
+            case "clarinet" :
+                myRoster.child("clarinet").child(userId).setValue(member);
+                break;
+            case "flute" :
+                myRoster.child("flute").child(userId).setValue(member);
+                break;
+            case "bass" :
+                myRoster.child("bass").child(userId).setValue(member);
+                break;
+            case "trumpet" :
+                myRoster.child("trumpet").child(userId).setValue(member);
+                break;
+            case "trombone" :
+                myRoster.child("trombone").child(userId).setValue(member);
+                break;
+            case "sousaphone" :
+                myRoster.child("sousaphone").child(userId).setValue(member);
+                break;
+            default:
+                Log.e(TAG, "addMember: invalid entry");
+                break;
+        }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -183,12 +269,9 @@ public class MainActivity extends AppCompatActivity {
         int menuId = item.getItemId();
         switch(menuId) {
             case R.id.addMenuItem:
-//                Intent intent = new Intent(MainActivity.this, NoteActivity.class);
-//                startActivityForResult(intent, ADD_NOTE_CODE);
                 Intent intent = new Intent(MainActivity.this, NewUser.class);
-                startActivity(intent);
-
-
+                intent.putExtra("redo", false);
+                startActivityForResult(intent, ADD_MEMBER_CODE);
                 return true;
             case R.id.clearMenu:
                 AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
@@ -208,6 +291,34 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if((requestCode == ADD_MEMBER_CODE)&&(resultCode == Activity.RESULT_OK)){
+            Log.d(TAG, "onActivityResult: pre");
+            BandMember temp = (BandMember) data.getSerializableExtra("newMember");
+            boolean exists = false;
+            for(int i = 0; i < roster.size(); i++){
+                if(roster.get(i).getUserName().equals(temp.getUserName())){
+                    exists = true;
+                }
+            }
+            if(!exists) {
+                addMember(temp);
+            } else {
+                Toast.makeText(this, "that user name is already taken", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, NewUser.class);
+                intent.putExtra("newMember", temp);
+                boolean redo = true;
+                intent.putExtra("redo", true);
+                startActivityForResult(intent, ADD_MEMBER_CODE);
+            }
+            arrayAdapter.notifyDataSetChanged();
+        }
+
+    }
 
 
 }

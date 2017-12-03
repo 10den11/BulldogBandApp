@@ -1,10 +1,14 @@
 package com.example.vhl2.bandapp3;
 
+import android.support.annotation.NonNull;
+
+import java.io.Serializable;
+
 /**
  * Created by Vhl2 on 11/22/2017.
  */
 
-public class BandMember {
+public class BandMember implements Serializable, Comparable<BandMember>{
     private String Name;
     private String Password;
     private Boolean Admin;
@@ -125,5 +129,20 @@ public class BandMember {
     @Override
     public String toString() {
         return  UserName + " Total Points: " + points;
+        //return UserName + " " + instrument;
+    }
+
+
+    @Override
+    public int compareTo(@NonNull BandMember other) {
+        if (instrument.compareTo(other.getInstrument()) != 0) {
+            return this.instrument.compareTo(other.getInstrument());
+        } else {
+            if(UserName.compareTo(other.getUserName()) != 0) {
+                return this.UserName.compareTo(other.getUserName());
+            } else {
+                return 0;
+            }
+        }
     }
 }
