@@ -1,4 +1,4 @@
-package com.example.dominicg.cloudapp;
+package com.example.vhl2.bandapp3;
 
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -58,16 +58,18 @@ public class AddPointsActivity extends AppCompatActivity {
                 int k = 0;
                 if(userList.size() == 0 && userUI.size() == 0) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                        userList.add(postSnapshot.getValue(BandMember.class));
-                        Log.d(TAG, "onDataChange: " + userList.toString());
-                        userUI.add(new CheckBox(AddPointsActivity.this));
-                        rowSpec = GridLayout.spec(k + 2, GridLayout.FILL);
-                        colSpec = GridLayout.spec(0, 2);
-                        layoutParams = new GridLayout.LayoutParams(rowSpec, colSpec);
-                        userUI.get(k).setLayoutParams(layoutParams);
-                        userUI.get(k).setText(userList.get(k).getName());
-                        gridLayout.addView(userUI.get(k));
-                        k++;
+                        for(DataSnapshot snapshot : postSnapshot.getChildren()) {
+                            userList.add(snapshot.getValue(BandMember.class));
+                            Log.d(TAG, "onDataChange: " + userList.toString());
+                            userUI.add(new CheckBox(AddPointsActivity.this));
+                            rowSpec = GridLayout.spec(k + 2, GridLayout.FILL);
+                            colSpec = GridLayout.spec(0, 2);
+                            layoutParams = new GridLayout.LayoutParams(rowSpec, colSpec);
+                            userUI.get(k).setLayoutParams(layoutParams);
+                            userUI.get(k).setText(userList.get(k).getName());
+                            gridLayout.addView(userUI.get(k));
+                            k++;
+                        }
                     }
                 }
             }
@@ -168,7 +170,8 @@ public class AddPointsActivity extends AppCompatActivity {
                 for(int k = 0; k < userUI.size(); k++) {
                     if(userUI.get(k).isChecked()) {
                         userList.get(k).addPoints(points);
-                        myRoster.child(userList.get(k).getUserName()).setValue(userList.get(k));
+
+                        myRoster.child(userList.get(k).getInstrument()).child(userList.get(k).getUserName()).setValue(userList.get(k));
                     }
                 }
                 finish();
@@ -178,3 +181,4 @@ public class AddPointsActivity extends AppCompatActivity {
         }
     }
 }
+

@@ -71,11 +71,8 @@ public class NewUser extends AppCompatActivity {
         EditText passwordText = (EditText) findViewById(R.id.password);
         Spinner year = (Spinner) findViewById(R.id.classes);
         Spinner instrument = (Spinner) findViewById(R.id.section);
-        Switch admin = (Switch) findViewById(R.id.admin);
         EditText passwordText2 = (EditText) findViewById(R.id.passwordCheck);
 
-
-        admin.setChecked(user.getAdmin());
         nameText.setText(user.getName());
         userNameText.setText(user.getUserName());
         passwordText.setText(user.getPassword());
@@ -208,14 +205,7 @@ public class NewUser extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void isAdmin (View view){
-        Switch admin = (Switch) findViewById(R.id.admin);
-        if(admin.isChecked()){
-            user.setAdmin(true);
-        }else{
-            user.setAdmin(false);
-        }
-    }
+
 
 
 

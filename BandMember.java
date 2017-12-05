@@ -126,13 +126,21 @@ public class BandMember implements Serializable, Comparable<BandMember>{
         this.instrument = instrument;
     }
 
+    public void addPoints(int newPoints){
+        points += newPoints;
+    }
+
+    /**
+     * toString method for bandMember objects that shows their user name and points
+     * @return String Containing UserNames and Points
+     */
     @Override
     public String toString() {
         return  UserName + " Total Points: " + points;
-        //return UserName + " " + instrument;
     }
 
 
+    
     @Override
     public int compareTo(@NonNull BandMember other) {
         if (instrument.compareTo(other.getInstrument()) != 0) {
