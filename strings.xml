@@ -6,12 +6,19 @@
     <string name="yes_button">yes</string>
     <string name="no_button">no</string>
     <string name="alert_title">alert</string>
-    <string name="clear_warning">Do you really want to clear the database?</string>
+    <string name="clear_warning">Do you really want to clear the database including your own account?</string>
+    <string name="delete_warning">are you sure you want to delete the selected items</string>
     <string name="name">name</string>
     <string name="username">username</string>
     <string name="password">password</string>
     <string name="password_check">confirm password</string>
     <string name="finish_button">finish</string>
+    <string name="settings_name">settings</string>
+    <string name="logout_name">logout</string>
+    <string name="title">Bulldog Band Point Tracker</string>
+    <string name="add_points_name">Add Points</string>
+    <string name="new_user_name">New User</string>
+    <string name="band_name">Band</string>
     <string-array name="sections">
         <item>saxophone</item>
         <item>trumpet</item>

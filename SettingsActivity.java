@@ -1,5 +1,4 @@
-package com.example.dominicg.cloudapp;
-
+package com.example.vhl2.bandapp3;
 import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;

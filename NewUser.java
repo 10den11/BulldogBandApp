@@ -1,3 +1,10 @@
+/**
+ * This activity allows the user to enter in their name, username, password, section and year.
+ * It checks to make sure that none of these fields are blank and that passwords are valid.
+ * admins can edit users points in a different activity.
+ * Programming Assignment #8
+ * @version v1.0
+ */
 package com.example.vhl2.bandapp3;
 
 import android.app.Activity;
@@ -29,6 +36,12 @@ public class NewUser extends AppCompatActivity {
     private BandMember user;
     private Spinner classes;
     private Spinner section;
+
+    /**
+     * This function initializes an arrayadapter as well as the 2 spinners. It also sets the text
+     * Views views if the user has to renter a user name or rotated the phone.
+     * @param savedInstanceState a band member object
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -47,15 +60,11 @@ public class NewUser extends AppCompatActivity {
 
         adapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         classes.setAdapter(adapter2);
-
-
-
-
         Intent intent = getIntent();
 
         if (savedInstanceState != null) {
-               user = (BandMember) savedInstanceState.getSerializable("newMember");
-               setInformation();
+            user = (BandMember) savedInstanceState.getSerializable("newMember");
+            setInformation();
         } else if (intent.getExtras().getBoolean("redo")) {
             user = (BandMember) intent.getSerializableExtra("newMember");
             setInformation();
@@ -65,6 +74,9 @@ public class NewUser extends AppCompatActivity {
 
     }
 
+    /**
+     * This function is called by on create to set the contents of the text views and spinners
+     */
     private void setInformation(){
         EditText userNameText = (EditText) findViewById(R.id.userName);
         EditText nameText = (EditText) findViewById(R.id.name);
@@ -131,18 +143,21 @@ public class NewUser extends AppCompatActivity {
         }
     }
 
+    /**
+     * saves the instance state in case app is closed for any reason prematurely.
+     * @param outState instanceState for when app restarts
+     */
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putSerializable(NEW_USER_CODE, user);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
+    /**
+     * creates the options menu
+     * @param menu a menu reasource file;
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
@@ -151,7 +166,12 @@ public class NewUser extends AppCompatActivity {
     }
 
 
-
+    /**
+     * sets behavior for the options menu which allows it to submit the contents of the text Views
+     * and spinners into a bandmember object back to main activity.
+     * @param item the button that was clicked
+     * @return whether the action was successful.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int menuId = item.getItemId();
@@ -163,14 +183,9 @@ public class NewUser extends AppCompatActivity {
         String name = nameText.getText().toString();
         String userName = userNameText.getText().toString();
         String password = passwordText.getText().toString();
-        DatabaseReference myRoster = FirebaseDatabase.getInstance().getReference("Users");
-        FirebaseDatabase db = myRoster.getDatabase();
-        Query ref = db.getReference("parent").orderByChild("childNode").equalTo(userName);
-
-
 
         switch (menuId) {
-            case R.id.doneButton: // TODO user validation
+            case R.id.doneButton:
                 if((!userName.equals("") && (!password.equals("")))) {
                     if(password.equals(passwordText2.getText().toString())) {
 

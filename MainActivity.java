@@ -1,11 +1,31 @@
-package com.example.dominicg.cloudapp;
-
+package com.example.vhl2.bandapp3;
+/**
+ * This activity allows users to look at both their own points and the points of everyone else.
+ * It displays the every single bandmembers username section and total travel points in a ListView
+ * admins can use the plus button to go into add points activity. They can use the trash button to
+ * clear out the entire database. finally admins can long click to delete specific users
+ * Programming Assignment #8
+ *
+ * @version v1.0
+ */
+// sources
+// https://firebase.google.com/docs/database/?utm_source=studio
+// https://firebase.google.com/docs/reference/android/com/google/firebase/database/ChildEventListener
+// saxophone <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// trombone <div>Icons made by <a href="https://www.flaticon.com/authors/nikita-golubev" title="Nikita Golubev">Nikita Golubev</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// trumpet <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// sousaphone <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// flute <div>Icons made by <a href="http://www.freepik.com" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// clarinet <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// bass <div>Icons made by <a href="https://www.flaticon.com/authors/roundicons" title="Roundicons">Roundicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
+// drum <div>Icons made by <a href="https://www.flaticon.com/authors/smashicons" title="Smashicons">Smashicons</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,11 +34,14 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -26,14 +49,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
-
-import java.util.Collection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -51,9 +72,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * creates a gridlayer and sets up a firebase database reference that can and creates a long clicks
-     * for them
-     * @param savedInstanceState
+     * creates a gridlayout and sets up a firebase database reference that can and creates a
+     * long click listener which allows admins to delete users. This function also creates child
+     * event listeners which update the arraylist
+     * @param savedInstanceState a saved instance state for our app
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,19 +95,10 @@ public class MainActivity extends AppCompatActivity {
 
         // In the Database all band members are children of Users
         myRoster = FirebaseDatabase.getInstance().getReference("Users");
-        BandMember Vince = new BandMember("Vinent Lombardi","zags", true, "sophomore",
-                "vlombardi", 25, "saxophone");
-        BandMember Max = new BandMember("Maxwell Sherman","1234", false, "sophomore",
-                "mSherman", 7, "percussion");
-        BandMember Brian = new BandMember("Brian", "1234", false, "Junior", "BrianRocks", 35,  "bass");
-
-//          addMember(Vince);
-//          addMember(Max);
-//          addMember(Brian);
 
         Intent intent = getIntent();
         currentUser = (BandMember) intent.getSerializableExtra("currentUser");
-        Toast.makeText(this, "welcome " + currentUser.getUserName(), Toast.LENGTH_SHORT);
+        Toast.makeText(this, "welcome " + currentUser.getUserName(), Toast.LENGTH_SHORT).show();
 
         listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
         listView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -118,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
             /**
              * stub
              * @param actionMode
-             * @param menu
+             * @param menu menu file
              * @return
              */
             @Override
@@ -127,35 +140,57 @@ public class MainActivity extends AppCompatActivity {
             }
 
             /**
-             * Cam menu for removing users
+             * Cam menu for removing users removes all items in the arrayList that have been selected
+             * by the admin. if you are not an admin you are given a toast that says you cannot
+             * preform this action.
              * @param actionMode
-             * @param menuItem
+             * @param menuItem item clicked in the menu
              * @return
              */
             @Override
-            public boolean onActionItemClicked(ActionMode actionMode, MenuItem menuItem) {
+            public boolean onActionItemClicked(final ActionMode actionMode, MenuItem menuItem) {
                 int menuId = menuItem.getItemId();
 
-
+                Log.d(TAG, "onActionItemClicked: check1");
                 switch (menuId) {
                     case R.id.deleteMenuAction:
+                        Log.d(TAG, "onActionItemClicked: check2");
                         if (currentUser.getAdmin()) {
-                            for (int x = roster.size() - 1; x >= 0; x--) {
-                                if (listView.isItemChecked(x)) {
-                                    String instrument = roster.get(x).getInstrument();
-                                    String name = roster.get(x).getUserName();
-                                    myRoster.child(instrument).child(name).removeValue();
-                                    roster.remove(x);
+                            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
+                            alertBuilder.setNegativeButton(R.string.no_button, null);
+                            alertBuilder.setTitle(R.string.alert_title).setMessage(R.string.delete_warning);
+                            alertBuilder.setPositiveButton(R.string.yes_button, new DialogInterface.OnClickListener() {
+                                /**
+                                 * deletes selected items
+                                 * @param dialogInterface the alert dialogue
+                                 * @param i
+                                 */
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    for(int x = roster.size() - 1;x >=0 ;x--){
+                                        if (listView.isItemChecked(x)) {
+                                            String instrument = roster.get(x).getInstrument();
+                                            String name = roster.get(x).getUserName();
+                                            myRoster.child(instrument).child(name).removeValue();
+                                            roster.remove(x);
+                                            //Log.d(TAG, "onClick: remove successful");
+                                        }
+                                    }
+
+                                    Collections.sort(roster);
+                                    arrayAdapter.notifyDataSetChanged();
+                                    actionMode.finish();
+
                                 }
-                            }
-                            Collections.sort(roster);
-                            arrayAdapter.notifyDataSetChanged();
+                            });
+                            alertBuilder.show();
                         } else {
                             Toast.makeText(MainActivity.this, "you cannot delete users", Toast.LENGTH_SHORT).show();
                         }
+                        break;
                 }
 
-                actionMode.finish();
+
                 return true;
             }
 
@@ -181,16 +216,11 @@ public class MainActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    // for(DataSnapshot snapshot : child.getChildren()) {
-
                     BandMember member = child.getValue(BandMember.class);
                     roster.add(member);
-
                     arrayAdapter.notifyDataSetChanged();
-                    //}
                 }
                 //Log.d(TAG, "onChildAdded: " + dataSnapshot.getChildrenCount());
-
             }
 
 
@@ -198,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
             /**
              * this code removes a section of data from the database and then adds it back
              * in a new sorted order along with a new element.
-             * @param dataSnapshot
+             * @param dataSnapshot reference to a section of the data
              * @param s
              */
             @Override
@@ -219,9 +249,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                     }
-
                     roster.add(member);
-
                 }
                 Collections.sort(roster);
                 arrayAdapter.notifyDataSetChanged();
@@ -229,17 +257,16 @@ public class MainActivity extends AppCompatActivity {
 
             /**
              * stub
-             * @param dataSnapshot
+             * @param dataSnapshot a reference to a section of the data
              */
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved: ");
-
+                // Log.d(TAG, "onChildRemoved: ");
             }
 
             /**
              * stub
-             * @param dataSnapshot
+             * @param dataSnapshot a reference to a section of hte database
              * @param s
              */
             @Override
@@ -257,70 +284,63 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        //myRoster.addChildEventListener(childEventListener);
-        myRoster.addValueEventListener(new ValueEventListener() {
+        myRoster.addChildEventListener(childEventListener);
+        arrayAdapter = new ArrayAdapter<BandMember>(this, android.R.layout.simple_list_item_activated_1, roster){
+            /**
+             * sets the icons for the user sections
+             * @param position index in the database
+             * @param convertView view
+             * @param parent parent vie group
+             * @return an altered view
+             */
+            @NonNull
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                roster = new ArrayList<>();
-                for(DataSnapshot postSnapshot:dataSnapshot.getChildren()) {
-                    for(DataSnapshot snapshot:postSnapshot.getChildren()) {
-                        roster.add(snapshot.getValue(BandMember.class));
-                    }
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+                View view = super.getView(position, convertView, parent);
+                String type = roster.get(position).getInstrument();
+                TextView textView1 = (TextView) view.findViewById(android.R.id.text1);
+
+                switch(type){
+                    case "saxophone" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.saxophone,0,0 , 0);
+                        break;
+                    case "percussion" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.drum,0,0 , 0);
+                        break;
+                    case "clarinet" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.clarinet,0,0 , 0);
+                        break;
+                    case "flute" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.flute,0,0 , 0);
+                        break;
+                    case "bass" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bassguitar,0,0 , 0);
+                        break;
+                    case "trumpet" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.trumpet,0,0 , 0);
+                        break;
+                    case "trombone" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.trombone,0,0 , 0);
+                        break;
+                    case "sousaphone" :
+                        textView1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.musicalsign,0,0 , 0);
+                        break;
+                    default:
+                        Log.e(TAG, "addMember: invalid entry");
+                        break;
                 }
+                return view;
             }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        arrayAdapter = new ArrayAdapter<BandMember>(this, android.R.layout.simple_list_item_activated_1, roster);
+        };
         listView.setAdapter(arrayAdapter);
         gridLayout.addView(listView);
         setContentView(gridLayout);
     }
 
-//    /**
-//     * adds a member to one of the sub databases based on its membership
-//     * @param member incoming band member
-//     */
-//    public void addMember(BandMember member){
-//        String userId = member.getUserName();
-//        String userSection = member.getInstrument();
-//        switch(userSection){
-//            case "saxophone" :
-//                myRoster.child("saxophone").child(userId).setValue(member);
-//                break;
-//            case "percussion" :
-//                myRoster.child("percussion").child(userId).setValue(member);
-//                break;
-//            case "clarinet" :
-//                myRoster.child("clarinet").child(userId).setValue(member);
-//                break;
-//            case "flute" :
-//                myRoster.child("flute").child(userId).setValue(member);
-//                break;
-//            case "bass" :
-//                myRoster.child("bass").child(userId).setValue(member);
-//                break;
-//            case "trumpet" :
-//                myRoster.child("trumpet").child(userId).setValue(member);
-//                break;
-//            case "trombone" :
-//                myRoster.child("trombone").child(userId).setValue(member);
-//                break;
-//            case "sousaphone" :
-//                myRoster.child("sousaphone").child(userId).setValue(member);
-//                break;
-//            default:
-//                Log.e(TAG, "addMember: invalid entry");
-//                break;
-//        }
-//    }
-
     /**
      * creates the main_menu
-     * @param menu
+     * @param menu menu file
      * @return
      */
     @Override
@@ -331,8 +351,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * adds menuItems
-     * @param item
+     * adds mdds menu that allows admin users to clear the database and add points
+     * @param item the menu item that was clicked
      * @return
      */
     @Override
@@ -363,7 +383,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else {
                     Toast.makeText(this, "you are not aloud to wipe out the database", Toast.LENGTH_SHORT).show();
-                    return true;
                 }
             case R.id.settingsItem:
                 Intent settingsIntent = new Intent(MainActivity.this,
@@ -394,6 +413,14 @@ public class MainActivity extends AppCompatActivity {
                 arrayAdapter.notifyDataSetChanged();
             } else if(requestCode == SETTINGS_CODE) {
                 BandMember updatedUser = (BandMember) data.getSerializableExtra("changedInfoMember");
+                for(int i = roster.size() - 1; i >= 0; i--){
+                    if(roster.get(i).getUserName().equals(updatedUser.getUserName())){
+                        if(roster.get(i).getName().equals(updatedUser.getName())) {
+                            roster.remove(i);
+                            arrayAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
                 if(updatedUser.getInstrument().equals(currentUser.getInstrument())) {
                     myRoster.child(currentUser.getInstrument()).child(currentUser.getUserName())
                             .setValue(updatedUser);
@@ -403,7 +430,9 @@ public class MainActivity extends AppCompatActivity {
                     myRoster.child(updatedUser.getInstrument()).child(updatedUser.getUserName())
                             .setValue(updatedUser);
                 }
+
                 currentUser = updatedUser;
+
             }
         }
     }
