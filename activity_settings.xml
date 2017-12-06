@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:columnCount="2"
+    tools:context="com.example.dominicg.cloudapp.SettingsActivity">
+
+    <TextView
+        android:id="@+id/NameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name:"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/EditNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:textSize="20sp"/>
+
+    <TextView
+        android:id="@+id/CurrentPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Password:"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"/>
+
+    <EditText
+        android:id="@+id/EditPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:textSize="20sp"
+        android:inputType="textPassword"/>
+
+    <TextView
+        android:id="@+id/RepeatCurrentPassword"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Repeat New Password:"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"/>
+
+    <EditText
+        android:id="@+id/EditRepeatPasswordText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:textSize="20sp"
+        android:inputType="textPassword"/>
+
+    <TextView
+        android:id="@+id/IntstrumentText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Instrument:"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"/>
+
+    <Spinner
+        android:id="@+id/sectionSpinner"
+        android:layout_width="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:layout_height="wrap_content"
+        android:entries="@array/sections"/>
+
+    <TextView
+        android:id="@+id/classText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Class:"
+        android:textSize="20sp"
+        android:textColor="@android:color/black"/>
+
+    <Spinner
+        android:id="@+id/classSpinner"
+        android:layout_width="wrap_content"
+        android:layout_gravity="fill_horizontal"
+        android:layout_height="wrap_content"
+        android:entries="@array/classes"/>
+
+    <Button
+        android:id="@+id/updateSettingsButton"
+        android:layout_width="match_parent"
+        android:layout_columnSpan="2"
+        android:layout_height="wrap_content"
+        android:text="Update Settings"
+        />
+
+</GridLayout>

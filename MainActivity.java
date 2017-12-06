@@ -1,4 +1,4 @@
-package com.example.vhl2.bandapp3;
+package com.example.dominicg.cloudapp;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     final String TAG = "MainActivity";
     private DatabaseReference myRoster;
     final int ADD_POINTS_CODE = 2;
+    final int SETTINGS_CODE = 3;
     private BandMember currentUser;
 
     GridLayout gridLayout;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * creates a gridlayour and sets up a firebase database reference that can and creates a long clicks
+     * creates a gridlayer and sets up a firebase database reference that can and creates a long clicks
      * for them
      * @param savedInstanceState
      */
@@ -180,12 +181,12 @@ public class MainActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                   // for(DataSnapshot snapshot : child.getChildren()) {
+                    // for(DataSnapshot snapshot : child.getChildren()) {
 
-                        BandMember member = child.getValue(BandMember.class);
-                        roster.add(member);
+                    BandMember member = child.getValue(BandMember.class);
+                    roster.add(member);
 
-                        arrayAdapter.notifyDataSetChanged();
+                    arrayAdapter.notifyDataSetChanged();
                     //}
                 }
                 //Log.d(TAG, "onChildAdded: " + dataSnapshot.getChildrenCount());
@@ -256,7 +257,23 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        myRoster.addChildEventListener(childEventListener);
+        //myRoster.addChildEventListener(childEventListener);
+        myRoster.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                roster = new ArrayList<>();
+                for(DataSnapshot postSnapshot:dataSnapshot.getChildren()) {
+                    for(DataSnapshot snapshot:postSnapshot.getChildren()) {
+                        roster.add(snapshot.getValue(BandMember.class));
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
         arrayAdapter = new ArrayAdapter<BandMember>(this, android.R.layout.simple_list_item_activated_1, roster);
         listView.setAdapter(arrayAdapter);
         gridLayout.addView(listView);
@@ -346,7 +363,17 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 } else {
                     Toast.makeText(this, "you are not aloud to wipe out the database", Toast.LENGTH_SHORT).show();
+                    return true;
                 }
+            case R.id.settingsItem:
+                Intent settingsIntent = new Intent(MainActivity.this,
+                        SettingsActivity.class);
+                settingsIntent.putExtra("currentMember", currentUser);
+                startActivityForResult(settingsIntent, SETTINGS_CODE);
+                return true;
+            case R.id.logoutButton:
+                Intent logoutIntent;
+                finish();
             default:
                 Log.e(TAG, "onOptionsItemSelected: Invalid item selected");
                 return super.onOptionsItemSelected(item);
@@ -362,8 +389,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if((requestCode == ADD_POINTS_CODE)&&(resultCode == Activity.RESULT_OK)){
-            arrayAdapter.notifyDataSetChanged();
+        if(resultCode == Activity.RESULT_OK) {
+            if (requestCode == ADD_POINTS_CODE) {
+                arrayAdapter.notifyDataSetChanged();
+            } else if(requestCode == SETTINGS_CODE) {
+                BandMember updatedUser = (BandMember) data.getSerializableExtra("changedInfoMember");
+                if(updatedUser.getInstrument().equals(currentUser.getInstrument())) {
+                    myRoster.child(currentUser.getInstrument()).child(currentUser.getUserName())
+                            .setValue(updatedUser);
+                } else {
+                    myRoster.child(currentUser.getInstrument()).child(currentUser.getUserName())
+                            .removeValue();
+                    myRoster.child(updatedUser.getInstrument()).child(updatedUser.getUserName())
+                            .setValue(updatedUser);
+                }
+                currentUser = updatedUser;
+            }
         }
     }
 }
