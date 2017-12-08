@@ -9,8 +9,19 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+/**
+ * Settings Activity focuses on the UI around the settings tab in the
+ * app which allows the user to change thier profile such as change there
+ * name and instrument
+ */
 public class SettingsActivity extends AppCompatActivity {
     private BandMember editMember;
+
+    /**
+     * Method called on the creation of the activity setting it up before
+     * the user can interact with it
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,9 +36,9 @@ public class SettingsActivity extends AppCompatActivity {
         final Spinner sectionSpinner = (Spinner) findViewById(R.id.sectionSpinner);
         final Spinner classSpinner = (Spinner) findViewById(R.id.classSpinner);
         Button finishButton = findViewById(R.id.updateSettingsButton);
-
+        //sets the userName textBox to what they currently have thier name as
         editName.setText(editMember.getName());
-
+        //sets the instrument spinner to what the user's current instrument is
         switch(editMember.getInstrument()) {
             case "saxophone":
                 sectionSpinner.setSelection(0);
@@ -53,7 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
             case "sousaphone":
                 sectionSpinner.setSelection(7);
         }
-
+        //Sets the year spinner to what the user's current year is
         switch (editMember.getYear()) {
             case "freshman":
                 classSpinner.setSelection(0);
@@ -74,6 +85,9 @@ public class SettingsActivity extends AppCompatActivity {
         finishButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // this if statement checks if the user edited the password at all and if
+                // they did edit the password textbox make sure the password and repeatpassword
+                // boxes are the same. if tha tis the case then change the password
                 if(!newPassword.getText().toString().equals("")) {
                     if(!newPassword.getText().toString().equals(repeatPassword.getText().toString())) {
                         Toast.makeText(SettingsActivity.this, "Passwords do not match",
@@ -83,6 +97,7 @@ public class SettingsActivity extends AppCompatActivity {
                         editMember.setPassword(newPassword.getText().toString());
                     }
                 }
+                // the rest of this program just updates the profile with the new information
                 editMember.setName(editName.getText().toString());
                 editMember.setInstrument(sectionSpinner.getSelectedItem().toString());
                 editMember.setYear(classSpinner.getSelectedItem().toString());

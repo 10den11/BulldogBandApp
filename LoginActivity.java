@@ -21,7 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
+//LoginActivity is the first thing the user will see as it forces then to login before
+// they have acess to anything else. It also gives the user the option to sign up if they don't have an account
 public class LoginActivity extends AppCompatActivity {
     private DataSnapshot dataSnapshot;
     private DatabaseReference myRoster;
@@ -29,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     final int ADD_MEMBER_CODE = 1;
     BandMember currentUser;
-
+    //Called when the activity first starts
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +42,7 @@ public class LoginActivity extends AppCompatActivity {
         Button loginButton = (Button) findViewById(R.id.LoginButton);
         final EditText loginText = (EditText) findViewById(R.id.inputUsername);
         final EditText passwordText = (EditText) findViewById(R.id.inputPassword);
+        //Grabs all the users from the database in order to help authenticate the usre
         myRoster.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -59,6 +61,8 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+        //This handles whne the user clicks the signup button and takes the user
+        // to the sign up activity
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,7 +71,9 @@ public class LoginActivity extends AppCompatActivity {
                 startActivityForResult(intent, ADD_MEMBER_CODE);
             }
         });
-
+        //This deals when the user clicks the login button. First it checks if the username exists in the database
+        // if it does exist check if the password matches the password for the given username. If both of these are true
+        // it will allow the user to login and otherwise show a toast saying that they have the wrong credentials
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

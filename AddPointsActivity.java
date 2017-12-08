@@ -27,6 +27,10 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This activity deals with when an admin wants to add points to certain bandmembers
+ * and all functions associated with that
+ */
 public class AddPointsActivity extends AppCompatActivity {
     private DataSnapshot dataSnapshot;
     private DatabaseReference myRoster;
@@ -39,6 +43,10 @@ public class AddPointsActivity extends AppCompatActivity {
     Spinner pointSpinner;
     EditText otherAmount;
 
+    /**
+     * Deals with when this activity is creted
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +54,8 @@ public class AddPointsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         myRoster = FirebaseDatabase.getInstance().getReference("Users");
-
-
+        //This creates the list of users in the form of checkboxes to make it easier
+        // for the user
         myRoster.addValueEventListener(new ValueEventListener() {
             GridLayout.Spec rowSpec;
             GridLayout.Spec colSpec;
@@ -98,7 +106,8 @@ public class AddPointsActivity extends AppCompatActivity {
         pointText.setTextSize(20);
         pointText.setTextColor(Color.BLACK);
         gridLayout.addView(pointText);
-
+        //This creates the dropdown list for what type of point value you are going for
+        // men's game is 7, women's game is 14, other is an amount you enter yourself
         pointSpinner = new Spinner(this);
         List<String> pointSpinnerList = new ArrayList<>();
         pointSpinnerList.add("Men's Game");
@@ -114,6 +123,7 @@ public class AddPointsActivity extends AppCompatActivity {
         otherText.setTextSize(20);
         gridLayout.addView(otherText);
 
+        //aformentioned place where you enter the amount for other
         otherAmount = new EditText(this);
         otherAmount.setHint("# of Points");
         otherAmount.setTextColor(Color.BLACK);
@@ -143,16 +153,22 @@ public class AddPointsActivity extends AppCompatActivity {
         int menuId = item.getItemId();
         switch (menuId) {
             case R.id.selectAll:
+                //clicking this menu button selects all the users
+                //causing every member to have thier spot checked
                 for(int k = 0; k < userUI.size(); k++) {
                     userUI.get(k).setChecked(true);
                 }
                 return true;
             case R.id.deSelectAll:
+                //opposite of the one above this deselects all the members you
+                // have currently selected
                 for(int k = 0; k < userUI.size(); k++) {
                     userUI.get(k).setChecked(false);
                 }
                 return true;
             case R.id.addPoints:
+                //When the admin is done selecting who gets points they click this
+                // button and thus points are added t othe user
                 int points;
                 switch(pointSpinner.getSelectedItemPosition()) {
                     case 0:
