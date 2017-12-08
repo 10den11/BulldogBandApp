@@ -46,8 +46,7 @@ public class AddPointsActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         myRoster = FirebaseDatabase.getInstance().getReference("Users");
-        userList = new ArrayList<>();
-        userUI = new ArrayList<>();
+
 
         myRoster.addValueEventListener(new ValueEventListener() {
             GridLayout.Spec rowSpec;
@@ -56,6 +55,8 @@ public class AddPointsActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 int k = 0;
+                userList = new ArrayList<>();
+                userUI = new ArrayList<>();
                 if(userList.size() == 0 && userUI.size() == 0) {
                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         for(DataSnapshot snapshot : postSnapshot.getChildren()) {
@@ -79,7 +80,6 @@ public class AddPointsActivity extends AppCompatActivity {
 
             }
         });
-        Log.d(TAG, "onCreate: " + userList.toString());
         gridLayout = new GridLayout(this);
         gridLayout.setColumnCount(2);
         gridLayout.setBackgroundColor(Color.WHITE);
